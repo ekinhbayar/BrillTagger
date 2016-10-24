@@ -9,6 +9,52 @@
 return [
     [
         'The quick brown fox jumps over the lazy dog.',
-        // todo
+        array (
+            0 =>
+                array (
+                    'token' => 'The',
+                    'tag' => 'AT',
+                ),
+            1 =>
+                array (
+                    'token' => 'quick',
+                    'tag' => 'JJ',
+                ),
+            2 =>
+                array (
+                    'token' => 'brown',
+                    'tag' => 'JJ',
+                ),
+            3 =>
+                array (
+                    'token' => 'fox',
+                    'tag' => 'NN',
+                ),
+            4 =>
+                array (
+                    'token' => 'jumps',
+                    'tag' => 'VBZ',
+                ),
+            5 =>
+                array (
+                    'token' => 'over',
+                    'tag' => 'IN',
+                ),
+            6 =>
+                array (
+                    'token' => 'the',
+                    'tag' => 'AT',
+                ),
+            7 =>
+                array (
+                    'token' => 'lazy',
+                    'tag' => 'JJ',
+                ),
+            8 =>
+                array (
+                    'token' => 'dog',
+                    'tag' => 'NN',
+                ),
+        )
     ]
 ];
