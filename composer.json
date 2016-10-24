@@ -1,0 +1,29 @@
+{
+  "name": "ekinhbayar/brill-tagger",
+  "homepage": "https://github.com/ekinhbayar/BrillTagger",
+  "description": "PHP implementation of a Brill Tagger, an inductive part-of-speech tagging method.",
+  "keywords": [
+    "brill", "tagger", "pos", "part of speech", "nlp"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ekin H. Bayar",
+      "email": "ekin@coproductivity.com",
+      "role": "Lead Developer"
+    }
+  ],
+  "require": {
+    "php": ">5"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "5.5.*"
+  },
+  "autoload": {
+    "psr-4": {"BrillTagger\\": "src/"},
+    "files": ["src/lexicon.php"]
+  },
+  "autoload-dev": {
+    "psr-4": {"BrillTaggerTests\\": "tests/BrillTaggerTests/"}
+  }
+}
