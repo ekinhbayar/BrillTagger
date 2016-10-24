@@ -119,15 +119,3 @@ class BrillTagger
         return $tags;
     }
 }
-
-// little helper function to print the results
-function printTag($tags) {
-    foreach($tags as $t) {
-        echo $t['token'] . "/" . $t['tag'] .  " ";
-        echo "\n";
-    }
-}
-
-$tagger = new BrillTagger();
-$tags = $tagger->tag("The quick brown fox jumps over the lazy dog");
-printTag($tags);
