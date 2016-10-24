@@ -52,7 +52,7 @@ return [
                 ),
             8 =>
                 array (
-                    'token' => 'dog',
+                    'token' => 'dog.',
                     'tag' => 'NN',
                 ),
         )
