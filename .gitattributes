@@ -4,6 +4,6 @@
 /.gitignore export-ignore
 /.scrutinizer.yml export-ignore
 /.travis.yml export-ignore
-/phpunit.xml export-ignore
+/phpunit.xml.dist export-ignore
 /changelog.md export-ignore
 /readme.md export-ignore
