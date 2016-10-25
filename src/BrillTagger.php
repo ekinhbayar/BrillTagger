@@ -1,14 +1,11 @@
 <?php
 /**
- * http://phpir.com/part-of-speech-tagging/
- *
  * Part Of Speech Tagging
  * Brill Tagger
  *
- * Requires reading the lexicon.txt file.
- * The tags are listed here:
- * https://en.wikipedia.org/wiki/Brown_Corpus#Part-of-speech_tags_used
- *
+ * @category   BrillTagger
+ * @author     Ekin H. Bayar <ekin@coproductivity.com>
+ * @version    0.1.0
  */
 
 namespace BrillTagger;
@@ -19,7 +16,7 @@ class BrillTagger
 
     public function tag($text) {
 
-        preg_match_all("/[\w\d\.']+/", $text, $matches);
+        preg_match_all("/[\w\d\.'%]+/", $text, $matches);
 
         $tags = [];
         $i = 0;
@@ -29,7 +26,7 @@ class BrillTagger
             $tags[$i] = ['token' => $token, 'tag' => 'NN'];
 
             # remove trailing full stops
-            if (substr($token, -1) == '.') {
+            if (substr(trim($token), -1) == '.') {
                 $token = preg_replace('/\.+$/', '', $token);
             }
 
@@ -40,7 +37,7 @@ class BrillTagger
 
             # Converts verbs after 'the' to nouns
             if ($i > 0) {
-                if ($tags[$i - 1]['tag'] == 'DT' && in_array($tags[$i]['tag'], ['VBD', 'VBP', 'VB'])) {
+                if ($tags[$i - 1]['tag'] == 'DT' && $this->isVerb($tags[$i]['tag'])) {
                     $tags[$i]['tag'] = 'NN';
                 }
             }
@@ -50,17 +47,17 @@ class BrillTagger
                 $tags[$i]['tag'] = 'CD';
             }
 
-            # manually tag numerals (years/money too) (NNS)
+            # manually tag numerals, cardinals, money (NNS)
             if (preg_match(NUMERAL, $token)) {
                 $tags[$i]['tag'] = 'NNS';
             }
 
-            # years like: '80s (NNS) | '73 (CD)
+            # manually tag years
             if (preg_match(YEAR, $token, $matches)) {
                 $tags[$i]['tag'] = (isset($matches['nns'])) ? 'NNS' : 'CD';
             }
 
-            # 80% NN
+            # manually tag percentages
             if (preg_match(PERCENTAGE, $token)) {
                 $tags[$i]['tag'] = 'NN';
             }
@@ -86,7 +83,7 @@ class BrillTagger
 
             # Noun to verb if the word before is 'would'
             if ($i > 0) {
-                if($tags[$i]['tag'] == 'NN' && strtolower($tags[$i-1]['token']) == 'would') {
+                if ($tags[$i]['tag'] == 'NN' && strtolower($tags[$i-1]['token']) == 'would') {
                     $tags[$i]['tag'] = 'VB';
                 }
             }
@@ -99,7 +96,7 @@ class BrillTagger
             # If we get noun noun, and the 2nd can be a verb, convert to verb
             if ($i > 0) {
 
-                if( $this->isNoun($tags[$i]['tag'])
+                if ($this->isNoun($tags[$i]['tag'])
                     && $this->isNoun($tags[$i-1]['tag'])
                     && isset($this->dictionary[strtolower($token)])
                 ) {
@@ -120,4 +117,9 @@ class BrillTagger
     public function isNoun($tag) {
         return in_array($tag, ['NN', 'NNS']);
     }
+
+    public function isVerb($tag) {
+        return in_array($tag, ['VBD', 'VBP', 'VB']);
+    }
 }
+
