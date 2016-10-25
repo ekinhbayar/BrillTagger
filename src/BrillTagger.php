@@ -40,7 +40,7 @@ class BrillTagger
 
             # Converts verbs after 'the' to nouns
             if ($i > 0) {
-                if($tags[$i - 1]['tag'] == 'DT' && in_array($tags[$i]['tag'], ['VBD', 'VBP', 'VB'])) {
+                if ($tags[$i - 1]['tag'] == 'DT' && in_array($tags[$i]['tag'], ['VBD', 'VBP', 'VB'])) {
                     $tags[$i]['tag'] = 'NN';
                 }
             }
@@ -51,17 +51,17 @@ class BrillTagger
             }
 
             # manually tag numerals (years/money too) (NNS)
-            if (preg_match(NUMERAL, $token)){
+            if (preg_match(NUMERAL, $token)) {
                 $tags[$i]['tag'] = 'NNS';
             }
 
             # years like: '80s (NNS) | '73 (CD)
-            if (preg_match(YEAR, $token, $matches)){
+            if (preg_match(YEAR, $token, $matches)) {
                 $tags[$i]['tag'] = (isset($matches['nns'])) ? 'NNS' : 'CD';
             }
 
             # 80% NN
-            if (preg_match(PERCENTAGE, $token)){
+            if (preg_match(PERCENTAGE, $token)) {
                 $tags[$i]['tag'] = 'NN';
             }
 
@@ -117,7 +117,7 @@ class BrillTagger
         return $tags;
     }
 
-    public function isNoun($tag){
+    public function isNoun($tag) {
         return in_array($tag, ['NN', 'NNS']);
     }
 }
