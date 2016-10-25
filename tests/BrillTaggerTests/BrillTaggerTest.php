@@ -7,8 +7,6 @@ use BrillTagger\BrillTagger;
 class BrillTaggerTest extends \PHPUnit_Framework_TestCase
 {
     private $tagger;
-    protected $preserveGlobalState = FALSE;
-    protected $runTestInSeparateProcess = TRUE;
 
     public function setUp()
     {
@@ -21,13 +19,33 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Data provider for brill tagger
+     * Data provider for sample input
      *
      * @return array
      */
-    public function inputProvider()
+    public function sampleInputProvider()
     {
         return require(__DIR__ . '/data_provider/sample_input.php');
+    }
+
+    /**
+     * Data provider for conversion of verbs after 'the' to nouns
+     *
+     * @return array
+     */
+    public function verbToArticleInputProvider()
+    {
+        return require(__DIR__ . '/data_provider/noun_after_article.php');
+    }
+
+    /**
+     * Data provider for percentages
+     *
+     * @return array
+     */
+    public function percentageInputProvider()
+    {
+        return require(__DIR__ . '/data_provider/percentage.php');
     }
 
     /**
@@ -36,14 +54,39 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      * @param string $input
      * @param array $expected
      *
-     * @dataProvider inputProvider
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
+     * @dataProvider sampleInputProvider
      */
     public function testBrillTagger(string $input, array $expected)
     {
         $tags = $this->tagger->tag($input);
+        $this->assertEquals($expected, $tags);
+    }
 
+    /**
+     * Test conversion of verbs after 'the' to nouns
+     *
+     * @param string $input
+     * @param array $expected
+     *
+     * @dataProvider verbToArticleInputProvider
+     */
+    public function testVerbAfterArticleToNoun(string $input, array $expected)
+    {
+        $tags = $this->tagger->tag($input);
+        $this->assertEquals($expected, $tags);
+    }
+
+    /**
+     * Test conversion of verbs after 'the' to nouns
+     *
+     * @param string $input
+     * @param array $expected
+     *
+     * @dataProvider percentageInputProvider
+     */
+    public function testPercentageTagging(string $input, array $expected)
+    {
+        $tags = $this->tagger->tag($input);
         $this->assertEquals($expected, $tags);
     }
 }

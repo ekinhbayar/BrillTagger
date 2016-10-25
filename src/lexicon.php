@@ -1,7 +1,9 @@
 <?php
 
 namespace BrillTagger;
-
+/**
+ * @codeCoverageIgnoreStart
+ */
 const LEXICON = [
     '!' => ['.', '.-HL'],
     '&' => ['CC', 'CC-HL', 'CC-TL', 'NP-TL'],
@@ -55736,3 +55738,6 @@ REGEX;
 const YEAR = "/^('\d{2}|\d{4})(?<nns>'?s)?$/uix";
 
 const PERCENTAGE = "/^\d*\s?%$/uix";
+/**
+ * @codeCoverageIgnoreStart
+ */

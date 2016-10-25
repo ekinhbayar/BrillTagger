@@ -1,6 +1,7 @@
 filter:
     excluded_paths:
         - 'tests/*'
+        - 'src/lexicon.php'
 checks:
     php:
         use_self_instead_of_fqcn: true
