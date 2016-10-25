@@ -75,9 +75,13 @@ class BrillTagger
                 $tags[$i]['tag'] = 'RB';
             }
 
-            # Common noun to adjective if it ends with 'al'
-            if ($this->isNoun($tags[$i]['tag']) && substr($token, -2) == 'al') {
-                $tags[$i]['tag'] = 'JJ';
+            # Common noun to adjective if it ends with 'al', to gerund if 'ing'
+            if ($this->isNoun($tags[$i]['tag'])) {
+                if (substr($token, -2) == 'al'){
+                    $tags[$i]['tag'] = 'JJ';
+                } elseif (substr($token, -3) == 'ing'){
+                    $tags[$i]['tag'] = 'VBG';
+                }
             }
 
             # Noun to verb if the word before is 'would'
@@ -90,11 +94,6 @@ class BrillTagger
             # Noun to plural if it ends with an 's'
             if ($tags[$i]['tag'] == 'NN' && substr($token, -1) == 's') {
                 $tags[$i]['tag'] = 'NNS';
-            }
-
-            # Common noun to gerund
-            if ($this->isNoun($tags[$i]['tag']) && substr($token, -3) == 'ing') {
-                $tags[$i]['tag'] = 'VBG';
             }
 
             # If we get noun noun, and the 2nd can be a verb, convert to verb
