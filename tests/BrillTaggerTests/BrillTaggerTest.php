@@ -55,7 +55,6 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      * @param array $expected
      *
      * @dataProvider sampleInputProvider
-     * @covers BrillTagger
      */
     public function testBrillTagger(string $input, array $expected)
     {
@@ -70,7 +69,6 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      * @param array $expected
      *
      * @dataProvider verbToArticleInputProvider
-     * @covers BrillTagger
      */
     public function testVerbAfterArticleToNoun(string $input, array $expected)
     {
@@ -85,7 +83,6 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      * @param array $expected
      *
      * @dataProvider percentageInputProvider
-     * @covers BrillTagger
      */
     public function testPercentageTagging(string $input, array $expected)
     {
