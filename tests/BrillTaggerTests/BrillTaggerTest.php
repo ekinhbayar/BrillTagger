@@ -7,8 +7,6 @@ use BrillTagger\BrillTagger;
 class BrillTaggerTest extends \PHPUnit_Framework_TestCase
 {
     private $tagger;
-    protected $preserveGlobalState = FALSE;
-    protected $runTestInSeparateProcess = TRUE;
 
     public function setUp()
     {
@@ -57,8 +55,6 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      * @param array $expected
      *
      * @dataProvider sampleInputProvider
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
      * @covers BrillTagger
      */
     public function testBrillTagger(string $input, array $expected)
@@ -74,8 +70,6 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      * @param array $expected
      *
      * @dataProvider verbToArticleInputProvider
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
      * @covers BrillTagger
      */
     public function testVerbAfterArticleToNoun(string $input, array $expected)
@@ -91,8 +85,6 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      * @param array $expected
      *
      * @dataProvider percentageInputProvider
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
      * @covers BrillTagger
      */
     public function testPercentageTagging(string $input, array $expected)
