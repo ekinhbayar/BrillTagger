@@ -33,7 +33,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function verbToArticleInputProvider()
+    public function verbAfterArticleInputProvider()
     {
         return require(__DIR__ . '/data_provider/noun_after_article.php');
     }
@@ -68,7 +68,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      * @param string $input
      * @param array $expected
      *
-     * @dataProvider verbToArticleInputProvider
+     * @dataProvider verbAfterArticleInputProvider
      */
     public function testVerbAfterArticleToNoun(string $input, array $expected)
     {
