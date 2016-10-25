@@ -37,7 +37,7 @@ class BrillTagger
 
             # Converts verbs after 'the' to nouns
             if ($i > 0) {
-                if ($tags[$i - 1]['tag'] == 'DT' && $this->isVerb($tags[$i]['tag'])) {
+                if ($tags[$i-1]['tag'] == 'DT' && $this->isVerb($tags[$i]['tag'])) {
                     $tags[$i]['tag'] = 'NN';
                 }
             }
@@ -74,9 +74,9 @@ class BrillTagger
 
             # Common noun to adjective if it ends with 'al', to gerund if 'ing'
             if ($this->isNoun($tags[$i]['tag'])) {
-                if (substr($token, -2) == 'al'){
+                if (substr($token, -2) == 'al') {
                     $tags[$i]['tag'] = 'JJ';
-                } elseif (substr($token, -3) == 'ing'){
+                } elseif (substr($token, -3) == 'ing') {
                     $tags[$i]['tag'] = 'VBG';
                 }
             }
