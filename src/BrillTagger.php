@@ -16,7 +16,7 @@ class BrillTagger
 
     public function tag($text) {
 
-        preg_match_all("/[\w\d\.'%]+/", $text, $matches);
+        preg_match_all("/[\w\d\.'%@]+/", $text, $matches);
 
         $tags = [];
         $i = 0;
@@ -78,6 +78,8 @@ class BrillTagger
                     $tags[$i]['tag'] = 'JJ';
                 } elseif (substr($token, -3) == 'ing') {
                     $tags[$i]['tag'] = 'VBG';
+                } elseif ($token === 'I') {
+                    $tags[$i]['tag'] = 'PPSS';
                 }
             }
 
@@ -119,7 +121,41 @@ class BrillTagger
     }
 
     public function isVerb($tag) {
-        return in_array($tag, ['VBD', 'VBP', 'VB']);
+        return substr(trim($tag), 0, 2) == 'VB';
     }
-}
 
+    public function isPronoun($tag) {
+        return substr(trim($tag), 0, 1) == 'P';
+    }
+
+    # it him me us you 'em thee we'uns
+    public function isAccusativePronoun($tag) {
+        return $tag === 'PPO';
+    }
+
+    # it he she thee
+    public function isThirdPersonPronoun($tag) {
+        return $tag === 'PPS';
+    }
+
+    # they we I you ye thou you'uns
+    public function isSingularPersonalPronoun($tag) {
+        return $tag === 'PPSS';
+    }
+
+    # itself himself myself yourself herself oneself ownself
+    public function isSingularReflexivePronoun($tag) {
+        return $tag === 'PPL';
+    }
+
+    # themselves ourselves yourselves
+    public function isPluralReflexivePronoun($tag) {
+        return $tag === 'PPLS';
+    }
+
+    #  ours mine his her/hers their/theirs our its my your/yours out thy thine
+    public function isPossessivePronoun($tag) {
+        return in_array($tag,['PP$$', 'PP$']);
+    }
+
+}
