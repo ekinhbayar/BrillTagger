@@ -14,6 +14,10 @@ class BrillTagger
 {
     private $dictionary = LEXICON;
 
+    /**
+     * @param $text
+     * @return array
+     */
     public function tag($text) {
 
         preg_match_all("/[\w\d\.'%@]+/", $text, $matches);
@@ -31,83 +35,24 @@ class BrillTagger
             }
 
             # get from dictionary if set
-            if (isset($this->dictionary[strtolower($token)])) {
+            if ($this->tokenExists($token)) {
                 $tags[$i]['tag'] = $this->dictionary[strtolower($token)][0];
             }
 
-            # Converts verbs after 'the' to nouns
-            if ($i > 0) {
-                if ($tags[$i-1]['tag'] == 'DT' && $this->isVerb($tags[$i]['tag'])) {
-                    $tags[$i]['tag'] = 'NN';
-                }
-            }
-
-            # Convert noun to number if . appears
-            if ($tags[$i]['tag'][0] == 'N' && strpos($token, '.') !== false) {
-                $tags[$i]['tag'] = 'CD';
-            }
-
-            # manually tag numerals, cardinals, money (NNS)
-            if (preg_match(NUMERAL, $token)) {
-                $tags[$i]['tag'] = 'NNS';
-            }
-
-            # manually tag years
-            if (preg_match(YEAR, $token, $matches)) {
-                $tags[$i]['tag'] = (isset($matches['nns'])) ? 'NNS' : 'CD';
-            }
-
-            # manually tag percentages
-            if (preg_match(PERCENTAGE, $token)) {
-                $tags[$i]['tag'] = 'NN';
-            }
-
-            # Convert noun to past participle if ends with 'ed'
-            if ($tags[$i]['tag'][0] == 'N' && substr($token, -2) == 'ed') {
-                $tags[$i]['tag'] = 'VBN';
-            }
+            $tags[$i]['tag'] = $this->transformNumerics($tags[$i]['tag'], $token);
 
             # Anything that ends 'ly' is an adverb
-            if (substr($token, -2) == 'ly') {
+            if ($this->isAdverb($token)) {
                 $tags[$i]['tag'] = 'RB';
             }
 
-            # Common noun to adjective if it ends with 'al', to gerund if 'ing'
             if ($this->isNoun($tags[$i]['tag'])) {
-                if (substr($token, -2) == 'al') {
-                    $tags[$i]['tag'] = 'JJ';
-                } elseif (substr($token, -3) == 'ing') {
-                    $tags[$i]['tag'] = 'VBG';
-                } elseif ($token === 'I') {
-                    $tags[$i]['tag'] = 'PPSS';
-                }
+                $tags[$i]['tag'] = $this->transformNoun($tags[$i]['tag'], $token);
             }
 
-            # Noun to verb if the word before is 'would'
             if ($i > 0) {
-                if ($tags[$i]['tag'] == 'NN' && strtolower($tags[$i-1]['token']) == 'would') {
-                    $tags[$i]['tag'] = 'VB';
-                }
-            }
-
-            # Noun to plural if it ends with an 's'
-            if ($tags[$i]['tag'] == 'NN' && substr($token, -1) == 's') {
-                $tags[$i]['tag'] = 'NNS';
-            }
-
-            # If we get noun noun, and the 2nd can be a verb, convert to verb
-            if ($i > 0) {
-
-                if ($this->isNoun($tags[$i]['tag'])
-                    && $this->isNoun($tags[$i-1]['tag'])
-                    && isset($this->dictionary[strtolower($token)])
-                ) {
-                    if (in_array('VBN', $this->dictionary[strtolower($token)])) {
-                        $tags[$i]['tag'] = 'VBN';
-                    } else if (in_array('VBZ', $this->dictionary[strtolower($token)])) {
-                        $tags[$i]['tag'] = 'VBZ';
-                    }
-                }
+                $tags[$i]['tag'] = $this->transformNounToVerb($tags, $i, $token);
+                $tags[$i]['tag'] = $this->transformVerbToNoun($tags, $i);
             }
 
             $i++;
@@ -116,46 +61,242 @@ class BrillTagger
         return $tags;
     }
 
-    public function isNoun($tag) {
-        return in_array($tag, ['NN', 'NNS']);
+    /**
+     * @param string $token
+     * @return bool
+     */
+    public function tokenExists($token) {
+        return isset($this->dictionary[strtolower($token)]);
     }
 
+    /**
+     * @param string $tag
+     * @return bool
+     */
+    public function isNoun($tag) {
+        return substr(trim($tag), 0, 1) == 'N';
+    }
+
+    /**
+     * @param string $tag
+     * @return bool
+     */
+    public function isSingularNoun($tag) {
+        return $tag == 'NN';
+    }
+
+    /**
+     * @param string $tag
+     * @param string $token
+     * @return bool
+     */
+    public function isPluralNoun($tag, $token) {
+        return ($this->isNoun($tag) && substr($token, -1) == 's');
+    }
+
+    /**
+     * @param string $tag
+     * @return bool
+     */
     public function isVerb($tag) {
         return substr(trim($tag), 0, 2) == 'VB';
     }
 
+    /**
+     * @param string $tag
+     * @return bool
+     */
     public function isPronoun($tag) {
         return substr(trim($tag), 0, 1) == 'P';
     }
 
-    # it him me us you 'em thee we'uns
+    /**
+     * @param string $token
+     * @return bool
+     */
+    public function isPastTenseVerb($token) {
+        return in_array('VBN', $this->dictionary[strtolower($token)]);
+    }
+
+    /**
+     * @param string $token
+     * @return bool
+     */
+    public function isPresentTenseVerb($token) {
+        return in_array('VBZ', $this->dictionary[strtolower($token)]);
+    }
+
+    /** it him me us you 'em thee we'uns
+     * @param string $tag
+     * @return bool
+     */
     public function isAccusativePronoun($tag) {
         return $tag === 'PPO';
     }
 
-    # it he she thee
+    /** it he she thee
+     * @param string $tag
+     * @return bool
+     */
     public function isThirdPersonPronoun($tag) {
         return $tag === 'PPS';
     }
 
-    # they we I you ye thou you'uns
+    /** they we I you ye thou you'uns
+     * @param string $tag
+     * @return bool
+     */
     public function isSingularPersonalPronoun($tag) {
         return $tag === 'PPSS';
     }
 
-    # itself himself myself yourself herself oneself ownself
+    /** itself himself myself yourself herself oneself ownself
+     * @param string $tag
+     * @return bool
+     */
     public function isSingularReflexivePronoun($tag) {
         return $tag === 'PPL';
     }
 
-    # themselves ourselves yourselves
+    /** themselves ourselves yourselves
+     * @param string $tag
+     * @return bool
+     */
     public function isPluralReflexivePronoun($tag) {
         return $tag === 'PPLS';
     }
 
-    #  ours mine his her/hers their/theirs our its my your/yours out thy thine
+    /** ours mine his her/hers their/theirs our its my your/yours out thy thine
+     * @param string $tag
+     * @return bool
+     */
     public function isPossessivePronoun($tag) {
-        return in_array($tag,['PP$$', 'PP$']);
+        return in_array($tag, ['PP$$', 'PP$']);
     }
 
+    /**
+     * @param string $token
+     * @return bool
+     */
+    public function isAdjective($token) {
+        return (substr($token, -2) == 'al' || in_array('JJ', $this->dictionary[strtolower($token)]));
+    }
+
+    /**
+     * @param string $token
+     * @return bool
+     */
+    public function isGerund($token) {
+        return substr($token, -3) == 'ing';
+    }
+
+    /**
+     * @param string $token
+     * @return bool
+     */
+    public function isPastParticiple($token) {
+        return substr($token, -2) == 'ed';
+    }
+
+    /**
+     * @param string $token
+     * @return bool
+     */
+    public function isAdverb($token) {
+        return substr($token, -2) == 'ly';
+    }
+
+    /** Common noun to adj. if it ends with 'al',
+     * to gerund if 'ing', to past tense if 'ed'
+     *
+     * @param string $tag
+     * @param string $token
+     * @return string
+     */
+    public function transformNoun($tag, $token) {
+
+        if ($this->isAdjective($token)) {
+            $tag = 'JJ';
+        } elseif ($this->isGerund($token)) {
+            $tag = 'VBG';
+        } elseif ($this->isPastParticiple($token)) {
+            $tag = 'VBN';
+        } elseif ($token === 'I') {
+            $tag = 'PPSS';
+        } elseif ($this->isPluralNoun($tag, $token)) {
+            $tag = 'NNS';
+        }
+
+        # Convert noun to number if . appears
+        if (strpos($token, '.') !== false) {
+            $tag = 'CD';
+        }
+
+        return $tag;
+    }
+
+    /**
+     * @param array $tags
+     * @param int $i
+     * @param string $token
+     * @return mixed
+     */
+    public function transformNounToVerb($tags, $i, $token) {
+        # Noun to verb if the word before is 'would'
+        if ($this->isSingularNoun($tags[$i]['tag']) && strtolower($tags[$i-1]['token']) == 'would') {
+            $tags[$i]['tag'] = 'VB';
+        }
+
+        # If we get noun noun, and the 2nd can be a verb, convert to verb
+        if ($this->isNoun($tags[$i]['tag']) &&
+            $this->isNoun($tags[$i-1]['tag']) &&
+            $this->tokenExists($token)
+        ) {
+            if ($this->isPastTenseVerb($token)) {
+                $tags[$i]['tag'] = 'VBN';
+            } elseif ($this->isPresentTenseVerb($token)) {
+                $tags[$i]['tag'] = 'VBZ';
+            }
+        }
+
+        return $tags[$i]['tag'];
+    }
+
+    /**
+     * @param array $tags
+     * @param int $i
+     * @return mixed
+     */
+    public function transformVerbToNoun($tags, $i) {
+        # Converts verbs after 'the' to nouns
+        if ($tags[$i-1]['tag'] == 'DT' && $this->isVerb($tags[$i]['tag'])) {
+            $tags[$i]['tag'] = 'NN';
+        }
+
+        return $tags[$i]['tag'];
+    }
+
+    /**
+     * @param string $tag
+     * @param string $token
+     * @return string
+     */
+    public function transformNumerics($tag, $token) {
+        # tag numerals, cardinals, money (NNS)
+        if (preg_match(NUMERAL, $token)) {
+            $tag = 'NNS';
+        }
+
+        # tag years
+        if (preg_match(YEAR, $token, $matches)) {
+            $tag = (isset($matches['nns'])) ? 'NNS' : 'CD';
+        }
+
+        # tag percentages
+        if (preg_match(PERCENTAGE, $token)) {
+            $tag = 'NN';
+        }
+
+        return $tag;
+    }
 }

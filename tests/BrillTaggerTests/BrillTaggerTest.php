@@ -109,6 +109,13 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test if a token exists in lexicon
+     */
+    public function testTokenExistence() {
+        $this->assertTrue($this->tagger->tokenExists("existence"));
+    }
+
+    /**
      * Test sample tagging result
      *
      * @param string $input
@@ -162,6 +169,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     {
         $tags = $this->tagger->tag($input);
         $this->assertEquals($expected[3]['tag'], $tags[3]['tag']);
+        $this->assertTrue($this->tagger->isNoun($tags[3]['tag']));
     }
 
     /**
@@ -176,6 +184,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     {
         $tags = $this->tagger->tag($input);
         $this->assertEquals($expected[4]['tag'], $tags[4]['tag']);
+        $this->assertTrue($this->tagger->isVerb($tags[4]['tag']));
     }
 
     /**
@@ -203,6 +212,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
                 $tags[6]['tag']
             ]
         );
+        $this->assertTrue($this->tagger->isPronoun($tags[0]['tag']));
     }
 
     /**
@@ -228,6 +238,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
                 $tags[5]['tag']
             ]
         );
+        $this->assertTrue($this->tagger->isAccusativePronoun($tags[0]['tag']));
     }
 
     /**
@@ -242,6 +253,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     {
         $tags = $this->tagger->tag($input);
         $this->assertEquals($expected[0]['tag'], $tags[0]['tag']);
+        $this->assertTrue($this->tagger->isThirdPersonPronoun($tags[0]['tag']));
     }
 
     /**
@@ -267,6 +279,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
                 $tags[7]['tag']
             ]
         );
+        $this->assertTrue($this->tagger->isSingularPersonalPronoun($tags[0]['tag']));
     }
 
     /**
@@ -292,6 +305,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
                 $tags[12]['tag']
             ]
         );
+        $this->assertTrue($this->tagger->isSingularReflexivePronoun($tags[2]['tag']));
     }
 
     /**
@@ -315,6 +329,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
                 $tags[7]['tag']
             ]
         );
+        $this->assertTrue($this->tagger->isPluralReflexivePronoun($tags[3]['tag']));
     }
 
     /**
@@ -342,5 +357,67 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
                 $tags[9]['tag']
             ]
         );
+        $this->assertTrue($this->tagger->isPossessivePronoun($tags[0]['tag']));
+    }
+
+    public function testTransformNounWithGerund() {
+        $tag = $this->tagger->tag("working");
+        $this->assertSame('VBG', $tag[0]['tag']);
+    }
+
+    public function testTransformNounWithPluralNoun() {
+        $tag = $this->tagger->tag("houses");
+        $this->assertSame('NNS', $tag[0]['tag']);
+    }
+
+    public function testTransformNounWithFirstPerson() {
+        $tag = $this->tagger->tag("I");
+        $this->assertSame('PPSS', $tag[0]['tag']);
+    }
+
+    public function testIsSingularNoun() {
+        $tag = $this->tagger->tag("lemon");
+        $this->assertTrue($this->tagger->isSingularNoun($tag[0]['tag']));
+    }
+
+    public function testIsPluralNoun() {
+        $tag = $this->tagger->tag("lemons");
+        $this->assertTrue($this->tagger->isPluralNoun($tag[0]['tag'], $tag[0]['token']));
+    }
+
+    public function testIsPastTenseVerb() {
+        $tag = $this->tagger->tag("worked");
+        $this->assertTrue($this->tagger->isPastTenseVerb($tag[0]['token']));
+    }
+
+    public function testIsPresentTenseVerb() {
+        $tag = $this->tagger->tag("talks");
+        $this->assertTrue($this->tagger->isPresentTenseVerb($tag[0]['token']));
+    }
+
+    public function testIsAdjective() {
+        $this->assertTrue($this->tagger->isAdjective("effective"));
+    }
+
+    public function testIsGerund() {
+        $this->assertTrue($this->tagger->isGerund("working"));
+    }
+
+    public function testIsPastParticiple() {
+        $this->assertTrue($this->tagger->isPastParticiple("worked"));
+    }
+
+    public function testIsAdverb() {
+        $this->assertTrue($this->tagger->isAdverb("inadvertently"));
+    }
+
+    public function testNumeralTagging() {
+        $tag = $this->tagger->tag("$30");
+        $this->assertSame('NNS', $tag[0]['tag']);
+    }
+
+    public function testYearTagging() {
+        $tag = $this->tagger->tag("1920's");
+        $this->assertSame('NNS', $tag[0]['tag']);
     }
 }
