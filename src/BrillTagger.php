@@ -51,8 +51,11 @@ class BrillTagger
             }
 
             if ($i > 0) {
-                $tags[$i]['tag'] = $this->transformNounToVerb($tags, $i, $token);
-                $tags[$i]['tag'] = $this->transformVerbToNoun($tags, $i);
+                if ($this->isNoun($tags[$i]['tag'])) {
+                    $tags[$i]['tag'] = $this->transformNounToVerb($tags, $i, $token);
+                } elseif ($this->isVerb($tags[$i]['tag'])) {
+                    $tags[$i]['tag'] = $this->transformVerbToNoun($tags, $i);
+                }
             }
 
             $i++;
@@ -99,7 +102,26 @@ class BrillTagger
      * @return bool
      */
     public function isVerb($tag) {
-        return substr(trim($tag), 0, 2) == 'VB';
+        return substr(trim($tag), 0, 2) == 'VB' || $this->isVerbToHave($tag);
+    }
+
+    /**
+     * @param string $tag
+     * @param string $token
+     * @return bool
+     */
+    public function isTokenVerb($tag, $token) {
+        return substr(trim($tag), 0, 2) == 'VB'
+        || $this->isVerbToHave($tag)
+        || in_array('VB', $this->dictionary[strtolower($token)]);
+    }
+
+    /**
+     * @param string $tag
+     * @return bool
+     */
+    public function isVerbToHave($tag) {
+        return substr(trim($tag), 0, 3) == 'HVD' || substr(trim($tag), 0, 3) == 'HVN';
     }
 
     /**
@@ -203,7 +225,7 @@ class BrillTagger
      * @return bool
      */
     public function isAdverb($token) {
-        return substr($token, -2) == 'ly';
+        return substr($token, -2) == 'ly' && strlen($token) !== 3;
     }
 
     /** Common noun to adj. if it ends with 'al',
@@ -298,5 +320,31 @@ class BrillTagger
         }
 
         return $tag;
+    }
+    
+    public function transformVerbsToThirdPerson($tag, $token) {
+        $verbs = ['can', 'shall', 'am', 'was', 'were', 'haz', 'said', 'made', 'do', 'go'];
+        $isVB  = $this->isVerb($tag) || in_array($token, $verbs);
+        # Disregard verb tags that don't need s|es|ies
+        $isOK  = in_array($tag, [ 'VBD', 'VBG', 'VBN', 'VBZ', 'MD' ]);
+
+        if ($isVB) {
+            if (substr($token, -1 ) == 'o') {
+                $o = "{$token}es";
+            } elseif (substr($token, -1 ) == 'y') {
+                $token = substr($token, 0, 2);
+                $o = "{$token}ies";
+            } elseif ($isOK) {
+                $o = $token;
+            } else {
+                $o = "{$token}s";
+            }
+
+            return $o;
+
+        } else {
+            return $token;
+        }
+
     }
 }

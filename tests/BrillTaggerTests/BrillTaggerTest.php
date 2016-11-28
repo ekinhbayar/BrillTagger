@@ -109,6 +109,16 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Data provider for verb transformation to 3rd person telling
+     *
+     * @return array
+     */
+    public function verbTransformationInputProvider()
+    {
+        return require(__DIR__ . '/data_provider/transform_verb.php');
+    }
+
+    /**
      * Test if a token exists in lexicon
      */
     public function testTokenExistence() {
@@ -358,6 +368,20 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
             ]
         );
         $this->assertTrue($this->tagger->isPossessivePronoun($tags[0]['tag']));
+    }
+
+    /**
+     * Test transformation of verbs to 3rd person telling
+     *
+     * @param string $input
+     * @param string $expected
+     *
+     * @dataProvider verbTransformationInputProvider
+     */
+    public function testVerbTransformationThirdPerson(string $input, string $expected) {
+        $tags = $this->tagger->tag($input);
+        var_dump($tags);
+        $this->assertSame($expected, $this->tagger->transformVerbsToThirdPerson($tags[0]['tag'], $tags[0]['token']));
     }
 
     public function testTransformNounWithGerund() {
