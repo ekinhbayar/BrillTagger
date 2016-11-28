@@ -107,17 +107,6 @@ class BrillTagger
 
     /**
      * @param string $tag
-     * @param string $token
-     * @return bool
-     */
-    public function isTokenVerb($tag, $token) {
-        return substr(trim($tag), 0, 2) == 'VB'
-        || $this->isVerbToHave($tag)
-        || in_array('VB', $this->dictionary[strtolower($token)]);
-    }
-
-    /**
-     * @param string $tag
      * @return bool
      */
     public function isVerbToHave($tag) {
@@ -326,18 +315,17 @@ class BrillTagger
         $verbs = ['can', 'shall', 'am', 'was', 'were', 'haz', 'said', 'made', 'do', 'go'];
         $isVB  = $this->isVerb($tag) || in_array($token, $verbs);
         # Disregard verb tags that don't need s|es|ies
-        $isOK  = in_array($tag, [ 'VBD', 'VBG', 'VBN', 'VBZ', 'MD' ]);
+        $isOK = in_array($tag, [ 'VBD', 'VBG', 'VBN', 'VBZ', 'MD' ]);
 
         if ($isVB) {
             if (substr($token, -1 ) == 'o') {
-                $o = "{$token}es";
+                $o = $token . 'es';
             } elseif (substr($token, -1 ) == 'y') {
-                $token = substr($token, 0, 2);
-                $o = "{$token}ies";
+                $o = substr($token, 0, 2) . 'ies';
             } elseif ($isOK) {
                 $o = $token;
             } else {
-                $o = "{$token}s";
+                $o = $token . 's';
             }
 
             return $o;

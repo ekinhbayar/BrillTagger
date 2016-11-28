@@ -380,7 +380,6 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      */
     public function testVerbTransformationThirdPerson(string $input, string $expected) {
         $tags = $this->tagger->tag($input);
-        var_dump($tags);
         $this->assertSame($expected, $this->tagger->transformVerbsToThirdPerson($tags[0]['tag'], $tags[0]['token']));
     }
 
