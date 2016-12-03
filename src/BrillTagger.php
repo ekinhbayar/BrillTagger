@@ -35,9 +35,9 @@ class BrillTagger
             }
 
             # get from dictionary if set
-            if ($this->tokenExists($token)) {
-                $tags[$i]['tag'] = $this->dictionary[strtolower($token)][0];
-            }
+            $tags[$i]['tag'] = $this->tokenExists($token)
+                ? $this->dictionary[strtolower($token)][0]
+                : 'NN';
 
             $tags[$i]['tag'] = $this->transformNumerics($tags[$i]['tag'], $token);
 
@@ -190,7 +190,9 @@ class BrillTagger
      * @return bool
      */
     public function isAdjective($token) {
-        return (substr($token, -2) == 'al' || in_array('JJ', $this->dictionary[strtolower($token)]));
+        return ($this->tokenExists($token))
+            ? in_array('JJ', $this->dictionary[strtolower($token)])
+            : substr($token, -2) == 'al';
     }
 
     /**
