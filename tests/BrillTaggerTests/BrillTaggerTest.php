@@ -126,7 +126,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     public function testBrillTagger(string $input, array $expected)
     {
         $tags = $this->tagger->tag($input);
-        $this->assertEquals($expected, $tags);
+        $this->assertSame($expected, $tags);
     }
 
     /**
@@ -140,7 +140,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     public function testVerbAfterArticleToNoun(string $input, array $expected)
     {
         $tags = $this->tagger->tag($input);
-        $this->assertEquals($expected, $tags);
+        $this->assertSame($expected, $tags);
     }
 
     /**
@@ -154,7 +154,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     public function testPercentageTagging(string $input, array $expected)
     {
         $tags = $this->tagger->tag($input);
-        $this->assertEquals($expected, $tags[0]);
+        $this->assertSame($expected, $tags[0]);
     }
 
     /**
@@ -168,7 +168,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     public function testIsNoun(string $input, array $expected)
     {
         $tags = $this->tagger->tag($input);
-        $this->assertEquals($expected[3]['tag'], $tags[3]['tag']);
+        $this->assertSame($expected[3]['tag'], $tags[3]['tag']);
         $this->assertTrue($this->tagger->isNoun($tags[3]['tag']));
     }
 
@@ -183,7 +183,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     public function testIsVerb(string $input, array $expected)
     {
         $tags = $this->tagger->tag($input);
-        $this->assertEquals($expected[4]['tag'], $tags[4]['tag']);
+        $this->assertSame($expected[4]['tag'], $tags[4]['tag']);
         $this->assertTrue($this->tagger->isVerb($tags[4]['tag']));
     }
 
@@ -198,7 +198,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     public function testIsPronoun(string $input, array $expected)
     {
         $tags = $this->tagger->tag($input);
-        $this->assertEquals(
+        $this->assertSame(
             [
                 $expected[0]['tag'],
                 $expected[2]['tag'],
@@ -226,7 +226,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     public function testIsAccusativePronoun(string $input, array $expected)
     {
         $tags = $this->tagger->tag($input);
-        $this->assertEquals(
+        $this->assertSame(
             [
                 $expected[0]['tag'],
                 $expected[2]['tag'],
@@ -252,7 +252,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     public function testIsThirdPersonPronoun(string $input, array $expected)
     {
         $tags = $this->tagger->tag($input);
-        $this->assertEquals($expected[0]['tag'], $tags[0]['tag']);
+        $this->assertSame($expected[0]['tag'], $tags[0]['tag']);
         $this->assertTrue($this->tagger->isThirdPersonPronoun($tags[0]['tag']));
     }
 
@@ -267,7 +267,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     public function testIsSingularPersonalPronoun(string $input, array $expected)
     {
         $tags = $this->tagger->tag($input);
-        $this->assertEquals(
+        $this->assertSame(
             [
                 $expected[0]['tag'],
                 $expected[3]['tag'],
@@ -293,7 +293,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     public function testIsSingularReflexivePronoun(string $input, array $expected)
     {
         $tags = $this->tagger->tag($input);
-        $this->assertEquals(
+        $this->assertSame(
             [
                 $expected[2]['tag'],
                 $expected[4]['tag'],
@@ -319,7 +319,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     public function testIsPluralReflexivePronoun(string $input, array $expected)
     {
         $tags = $this->tagger->tag($input);
-        $this->assertEquals(
+        $this->assertSame(
             [
                 $expected[3]['tag'],
                 $expected[7]['tag']
@@ -343,7 +343,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     public function testIsPossessivePronoun(string $input, array $expected)
     {
         $tags = $this->tagger->tag($input);
-        $this->assertEquals(
+        $this->assertSame(
             [
                 $expected[0]['tag'],
                 $expected[5]['tag'],
