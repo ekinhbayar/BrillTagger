@@ -109,6 +109,16 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Data provider for proper nouns
+     *
+     * @return array
+     */
+    public function properNounInputProvider()
+    {
+        return require(__DIR__ . '/data_provider/proper_noun.php');
+    }
+
+    /**
      * Test if a token exists in lexicon
      */
     public function testTokenExistence() {
@@ -173,6 +183,21 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test if a tag is a proper noun
+     *
+     * @param string $input
+     * @param array $expected
+     *
+     * @dataProvider properNounInputProvider
+     */
+    public function testIsProperNoun(string $input, array $expected)
+    {
+        $tags = $this->tagger->tag($input);
+        $this->assertSame($expected[0]['tag'], $tags[0]['tag']);
+        $this->assertTrue($this->tagger->isProperNoun($tags[0]['tag']));
+    }
+
+    /**
      * Test if a tag is a verb
      *
      * @param string $input
@@ -233,7 +258,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
                 $expected[5]['tag']
             ],
             [
-                $tags[0]['tag'],
+                substr(trim($tags[0]['tag']), 0, 3),
                 $tags[2]['tag'],
                 $tags[5]['tag']
             ]
