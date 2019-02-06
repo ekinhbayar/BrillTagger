@@ -25,5 +25,11 @@
   },
   "autoload-dev": {
     "psr-4": {"BrillTaggerTests\\": "tests/BrillTaggerTests/"}
+  },
+  "config": {
+    "preferred-install": "dist",
+    "platform": {
+      "php": "7.2"
+    }
   }
 }
