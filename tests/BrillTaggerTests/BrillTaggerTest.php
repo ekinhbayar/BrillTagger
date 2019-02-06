@@ -390,6 +390,26 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('VBG', $tag[0]['tag']);
     }
 
+    public function testTransformNounWithPastParticiple() {
+        $tag = $this->tagger->tag(" gotten");
+        $this->assertSame('VBN', $tag[0]['tag']);
+    }
+
+    public function testTransformNounAdjective() {
+        $tag = $this->tagger->tag("ambiguous");
+        $this->assertSame('JJ', $tag[0]['tag']);
+    }
+
+    public function testTransformNounPronoun() {
+        $tag = $this->tagger->tag("I");
+        $this->assertSame('PPSS', $tag[0]['tag']);
+    }
+
+    public function testTransformNounConvertToNumber() {
+        $tag = $this->tagger->tag("0.2");
+        $this->assertSame('CD', $tag[0]['tag']);
+    }
+
     public function testTransformNounWithPluralNoun() {
         $tag = $this->tagger->tag("houses");
         $this->assertSame('NNS', $tag[0]['tag']);
