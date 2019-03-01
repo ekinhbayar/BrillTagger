@@ -6,7 +6,7 @@ Uses a lexicon generated from [Brown Corpus](https://github.com/ekinhbayar/brown
 
 ### Installation
 
-`$ composer require ekinhbayar/brill-tagger`
+`$ composer require ekinhbayar/brill-tagger` then run `$ composer install`. The latter will define the lexicon.
 
 or just clone/download this repository.
 
