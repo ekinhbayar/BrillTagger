@@ -4,7 +4,7 @@
  * Brill Tagger
  *
  * @category   BrillTagger
- * @author     Ekin H. Bayar <ekin@coproductivity.com>
+ * @author     Ekin H. Bayar <me@ekins.space>
  * @version    0.1.0
  */
 
