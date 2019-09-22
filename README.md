@@ -4,6 +4,9 @@
 PHP implementation of a Brill Tagger, an inductive part-of-speech tagging method.
 Uses a lexicon generated from [Brown Corpus](https://github.com/ekinhbayar/brown-corpus).
 
+### Requirements
+- PHP 7.3+
+
 ### Installation
 
 `$ composer require ekinhbayar/brill-tagger` then run `$ composer install`. The latter will define the lexicon.

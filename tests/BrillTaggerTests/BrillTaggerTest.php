@@ -1,19 +1,21 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace BrillTaggerTests;
 
 use BrillTagger\BrillTagger;
+use PHPUnit\Framework\TestCase;
 
-class BrillTaggerTest extends \PHPUnit_Framework_TestCase
+class BrillTaggerTest extends TestCase
 {
+    /** @var BrillTagger $tagger */
     private $tagger;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->tagger = new BrillTagger();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->tagger = null;
     }
@@ -23,9 +25,9 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function sampleInputProvider()
+    public function sampleInputProvider(): array
     {
-        return require(__DIR__ . '/data_provider/sample_input.php');
+        return require __DIR__ . '/data_provider/sample_input.php';
     }
 
     /**
@@ -33,9 +35,9 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function verbAfterArticleInputProvider()
+    public function verbAfterArticleInputProvider(): array
     {
-        return require(__DIR__ . '/data_provider/noun_after_article.php');
+        return require __DIR__ . '/data_provider/noun_after_article.php';
     }
 
     /**
@@ -43,9 +45,9 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function percentageInputProvider()
+    public function percentageInputProvider(): array
     {
-        return require(__DIR__ . '/data_provider/percentage.php');
+        return require __DIR__ . '/data_provider/percentage.php';
     }
 
     /**
@@ -53,9 +55,9 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function pronounsInputProvider()
+    public function pronounsInputProvider(): array
     {
-        return require(__DIR__ . '/data_provider/pronouns.php');
+        return require __DIR__ . '/data_provider/pronouns.php';
     }
 
     /**
@@ -63,9 +65,9 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function accusativePronounsInputProvider()
+    public function accusativePronounsInputProvider(): array
     {
-        return require(__DIR__ . '/data_provider/accusative_pronouns.php');
+        return require __DIR__ . '/data_provider/accusative_pronouns.php';
     }
 
     /**
@@ -73,9 +75,9 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function singularPersonalPronounsInputProvider()
+    public function singularPersonalPronounsInputProvider(): array
     {
-        return require(__DIR__ . '/data_provider/singular_personal_pronouns.php');
+        return require __DIR__ . '/data_provider/singular_personal_pronouns.php';
     }
 
     /**
@@ -83,9 +85,9 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function singularReflexivePronounsInputProvider()
+    public function singularReflexivePronounsInputProvider(): array
     {
-        return require(__DIR__ . '/data_provider/singular_reflexive_pronouns.php');
+        return require __DIR__ . '/data_provider/singular_reflexive_pronouns.php';
     }
 
     /**
@@ -93,9 +95,9 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function pluralReflexivePronounsInputProvider()
+    public function pluralReflexivePronounsInputProvider(): array
     {
-        return require(__DIR__ . '/data_provider/plural_reflexive_pronouns.php');
+        return require __DIR__ . '/data_provider/plural_reflexive_pronouns.php';
     }
 
     /**
@@ -103,9 +105,9 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function possessivePronounsInputProvider()
+    public function possessivePronounsInputProvider(): array
     {
-        return require(__DIR__ . '/data_provider/possessive_pronouns.php');
+        return require __DIR__ . '/data_provider/possessive_pronouns.php';
     }
 
     /**
@@ -113,16 +115,17 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function properNounInputProvider()
+    public function properNounInputProvider(): array
     {
-        return require(__DIR__ . '/data_provider/proper_noun.php');
+        return require __DIR__ . '/data_provider/proper_noun.php';
     }
 
     /**
      * Test if a token exists in lexicon
      */
-    public function testTokenExistence() {
-        $this->assertTrue($this->tagger->tokenExists("existence"));
+    public function testTokenExistence(): void
+    {
+        $this->assertTrue($this->tagger->tokenExists('existence'));
     }
 
     /**
@@ -133,7 +136,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider sampleInputProvider
      */
-    public function testBrillTagger(string $input, array $expected)
+    public function testBrillTagger(string $input, array $expected): void
     {
         $tags = $this->tagger->tag($input);
         $this->assertSame($expected, $tags);
@@ -147,7 +150,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider verbAfterArticleInputProvider
      */
-    public function testVerbAfterArticleToNoun(string $input, array $expected)
+    public function testVerbAfterArticleToNoun(string $input, array $expected): void
     {
         $tags = $this->tagger->tag($input);
         $this->assertSame($expected, $tags);
@@ -161,7 +164,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider percentageInputProvider
      */
-    public function testPercentageTagging(string $input, array $expected)
+    public function testPercentageTagging(string $input, array $expected): void
     {
         $tags = $this->tagger->tag($input);
         $this->assertSame($expected, $tags[0]);
@@ -175,7 +178,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider sampleInputProvider
      */
-    public function testIsNoun(string $input, array $expected)
+    public function testIsNoun(string $input, array $expected): void
     {
         $tags = $this->tagger->tag($input);
         $this->assertSame($expected[3]['tag'], $tags[3]['tag']);
@@ -190,7 +193,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider properNounInputProvider
      */
-    public function testIsProperNoun(string $input, array $expected)
+    public function testIsProperNoun(string $input, array $expected): void
     {
         $tags = $this->tagger->tag($input);
         $this->assertSame($expected[0]['tag'], $tags[0]['tag']);
@@ -205,7 +208,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider sampleInputProvider
      */
-    public function testIsVerb(string $input, array $expected)
+    public function testIsVerb(string $input, array $expected): void
     {
         $tags = $this->tagger->tag($input);
         $this->assertSame($expected[4]['tag'], $tags[4]['tag']);
@@ -220,7 +223,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider pronounsInputProvider
      */
-    public function testIsPronoun(string $input, array $expected)
+    public function testIsPronoun(string $input, array $expected): void
     {
         $tags = $this->tagger->tag($input);
         $this->assertSame(
@@ -248,7 +251,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider accusativePronounsInputProvider
      */
-    public function testIsAccusativePronoun(string $input, array $expected)
+    public function testIsAccusativePronoun(string $input, array $expected): void
     {
         $tags = $this->tagger->tag($input);
         $this->assertSame(
@@ -274,7 +277,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider pronounsInputProvider
      */
-    public function testIsThirdPersonPronoun(string $input, array $expected)
+    public function testIsThirdPersonPronoun(string $input, array $expected): void
     {
         $tags = $this->tagger->tag($input);
         $this->assertSame($expected[0]['tag'], $tags[0]['tag']);
@@ -289,7 +292,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider singularPersonalPronounsInputProvider
      */
-    public function testIsSingularPersonalPronoun(string $input, array $expected)
+    public function testIsSingularPersonalPronoun(string $input, array $expected): void
     {
         $tags = $this->tagger->tag($input);
         $this->assertSame(
@@ -315,7 +318,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider singularReflexivePronounsInputProvider
      */
-    public function testIsSingularReflexivePronoun(string $input, array $expected)
+    public function testIsSingularReflexivePronoun(string $input, array $expected): void
     {
         $tags = $this->tagger->tag($input);
         $this->assertSame(
@@ -341,7 +344,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider pluralReflexivePronounsInputProvider
      */
-    public function testIsPluralReflexivePronoun(string $input, array $expected)
+    public function testIsPluralReflexivePronoun(string $input, array $expected): void
     {
         $tags = $this->tagger->tag($input);
         $this->assertSame(
@@ -365,7 +368,7 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider possessivePronounsInputProvider
      */
-    public function testIsPossessivePronoun(string $input, array $expected)
+    public function testIsPossessivePronoun(string $input, array $expected): void
     {
         $tags = $this->tagger->tag($input);
         $this->assertSame(
@@ -385,83 +388,100 @@ class BrillTaggerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->tagger->isPossessivePronoun($tags[0]['tag']));
     }
 
-    public function testTransformNounWithGerund() {
-        $tag = $this->tagger->tag("working");
+    public function testTransformNounWithGerund(): void
+    {
+        $tag = $this->tagger->tag('working');
         $this->assertSame('VBG', $tag[0]['tag']);
     }
 
-    public function testTransformNounWithPastParticiple() {
-        $tag = $this->tagger->tag(" gotten");
+    public function testTransformNounWithPastParticiple(): void
+    {
+        $tag = $this->tagger->tag(' gotten');
         $this->assertSame('VBN', $tag[0]['tag']);
     }
 
-    public function testTransformNounAdjective() {
-        $tag = $this->tagger->tag("ambiguous");
+    public function testTransformNounAdjective(): void
+    {
+        $tag = $this->tagger->tag('ambiguous');
         $this->assertSame('JJ', $tag[0]['tag']);
     }
 
-    public function testTransformNounPronoun() {
-        $tag = $this->tagger->tag("I");
+    public function testTransformNounPronoun(): void
+    {
+        $tag = $this->tagger->tag('I');
         $this->assertSame('PPSS', $tag[0]['tag']);
     }
 
-    public function testTransformNounConvertToNumber() {
-        $tag = $this->tagger->tag("0.2");
+    public function testTransformNounConvertToNumber(): void
+    {
+        $tag = $this->tagger->tag('0.2');
         $this->assertSame('CD', $tag[0]['tag']);
     }
 
-    public function testTransformNounWithPluralNoun() {
-        $tag = $this->tagger->tag("houses");
+    public function testTransformNounWithPluralNoun(): void
+    {
+        $tag = $this->tagger->tag('houses');
         $this->assertSame('NNS', $tag[0]['tag']);
     }
 
-    public function testTransformNounWithFirstPerson() {
-        $tag = $this->tagger->tag("I");
+    public function testTransformNounWithFirstPerson(): void
+    {
+        $tag = $this->tagger->tag('I');
         $this->assertSame('PPSS', $tag[0]['tag']);
     }
 
-    public function testIsSingularNoun() {
-        $tag = $this->tagger->tag("lemon");
+    public function testIsSingularNoun(): void
+    {
+        $tag = $this->tagger->tag('lemon');
         $this->assertTrue($this->tagger->isSingularNoun($tag[0]['tag']));
     }
 
-    public function testIsPluralNoun() {
-        $tag = $this->tagger->tag("lemons");
+    public function testIsPluralNoun(): void
+    {
+        $tag = $this->tagger->tag('lemons');
         $this->assertTrue($this->tagger->isPluralNoun($tag[0]['tag'], $tag[0]['token']));
     }
 
-    public function testIsPastTenseVerb() {
-        $tag = $this->tagger->tag("worked");
+    public function testIsPastTenseVerb(): void
+    {
+        $tag = $this->tagger->tag('worked');
         $this->assertTrue($this->tagger->isPastTenseVerb($tag[0]['token']));
     }
 
-    public function testIsPresentTenseVerb() {
-        $tag = $this->tagger->tag("talks");
+    public function testIsPresentTenseVerb(): void
+    {
+        $tag = $this->tagger->tag('talks');
         $this->assertTrue($this->tagger->isPresentTenseVerb($tag[0]['token']));
     }
 
-    public function testIsAdjective() {
-        $this->assertTrue($this->tagger->isAdjective("effective"));
+    public function testIsAdjective(): void
+    {
+        $this->assertTrue($this->tagger->isAdjective('effective'));
     }
 
-    public function testIsGerund() {
-        $this->assertTrue($this->tagger->isGerund("working"));
+    public function testIsGerund(): void
+    {
+        $this->assertTrue($this->tagger->isGerund('working'));
     }
 
-    public function testIsPastParticiple() {
-        $this->assertTrue($this->tagger->isPastParticiple("worked"));
+    public function testIsPastParticiple(): void
+    {
+        $this->assertTrue($this->tagger->isPastParticiple('worked'));
     }
 
-    public function testIsAdverb() {
-        $this->assertTrue($this->tagger->isAdverb("inadvertently"));
+    public function testIsAdverb(): void
+    {
+        $this->assertTrue($this->tagger->isAdverb('inadvertently'));
     }
 
-    public function testNumeralTagging() {
-        $tag = $this->tagger->tag("$30");
+    public function testNumeralTagging(): void
+    {
+        $tag = $this->tagger->tag('$30');
         $this->assertSame('NNS', $tag[0]['tag']);
     }
 
-    public function testYearTagging() {
+    public function testYearTagging(): void
+    {
         $tag = $this->tagger->tag("1920's");
         $this->assertSame('NNS', $tag[0]['tag']);
     }
