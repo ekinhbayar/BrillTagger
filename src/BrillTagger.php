@@ -1,11 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Part Of Speech Tagging
  * Brill Tagger
  *
  * @category   BrillTagger
  * @author     Ekin H. Bayar <me@ekins.space>
- * @version    0.1.0
+ * @version    0.2.0
  */
 
 namespace BrillTagger;
@@ -18,10 +18,10 @@ class BrillTagger
      * @param $text
      * @return array
      */
-    public function tag($text)
+    public function tag($text): array
     {
 
-        preg_match_all("/[\w\d\.'%@]+/", $text, $matches);
+        preg_match_all("/[\w\.'%@]+/", $text, $matches);
 
         $tags = [];
         $i    = 0;
@@ -31,7 +31,7 @@ class BrillTagger
             $tags[$i] = ['token' => $token, 'tag' => 'NN'];
 
             # remove trailing full stops
-            if (substr(trim($token), -1) == '.') {
+            if (substr(trim($token), -1) === '.') {
                 $token = preg_replace('/\.+$/', '', $token);
             }
 
@@ -52,8 +52,7 @@ class BrillTagger
             }
 
             if ($i > 0) {
-                $tags[$i]['tag'] = $this->transformNounToVerb($tags, $i, $token);
-                $tags[$i]['tag'] = $this->transformVerbToNoun($tags, $i);
+                $tags[$i]['tag'] = $this->transformBetweenNounAndVerb($tags, $i, $token);
             }
 
             $i++;
@@ -66,7 +65,7 @@ class BrillTagger
      * @param string $token
      * @return bool
      */
-    public function tokenExists($token)
+    public function tokenExists($token): bool
     {
         return isset($this->dictionary[$token]);
     }
@@ -75,27 +74,27 @@ class BrillTagger
      * @param string $tag
      * @return bool
      */
-    public function isNoun($tag)
+    public function isNoun($tag): bool
     {
-        return substr(trim($tag), 0, 1) == 'N';
+        return strpos(trim($tag), 'N') === 0;
     }
 
     /**
      * @param string $tag
      * @return bool
      */
-    public function isProperNoun($tag)
+    public function isProperNoun($tag): bool
     {
-        return substr(trim($tag), 0, 2) == 'NP';
+        return strpos(trim($tag), 'NP') === 0;
     }
 
     /**
      * @param string $tag
      * @return bool
      */
-    public function isSingularNoun($tag)
+    public function isSingularNoun($tag): bool
     {
-        return $tag == 'NN';
+        return $tag === 'NN';
     }
 
     /**
@@ -103,45 +102,45 @@ class BrillTagger
      * @param string $token
      * @return bool
      */
-    public function isPluralNoun($tag, $token)
+    public function isPluralNoun($tag, $token): bool
     {
-        return ($this->isNoun($tag) && substr($token, -1) == 's');
+        return ($this->isNoun($tag) && substr($token, -1) === 's');
     }
 
     /**
      * @param string $tag
      * @return bool
      */
-    public function isVerb($tag)
+    public function isVerb($tag): bool
     {
-        return substr(trim($tag), 0, 2) == 'VB';
+        return strpos(trim($tag), 'VB') === 0;
     }
 
     /**
      * @param string $tag
      * @return bool
      */
-    public function isPronoun($tag)
+    public function isPronoun($tag): bool
     {
-        return substr(trim($tag), 0, 1) == 'P';
+        return strpos(trim($tag), 'P') === 0;
     }
 
     /**
      * @param string $token
      * @return bool
      */
-    public function isPastTenseVerb($token)
+    public function isPastTenseVerb($token): bool
     {
-        return in_array('VBN', $this->dictionary[$token]);
+        return in_array('VBN', $this->dictionary[$token], true);
     }
 
     /**
      * @param string $token
      * @return bool
      */
-    public function isPresentTenseVerb($token)
+    public function isPresentTenseVerb($token): bool
     {
-        return in_array('VBZ', $this->dictionary[$token]);
+        return in_array('VBZ', $this->dictionary[$token], true);
     }
 
     /** it him me us you 'em thee we'uns
@@ -149,9 +148,9 @@ class BrillTagger
      * @param string $tag
      * @return bool
      */
-    public function isAccusativePronoun($tag)
+    public function isAccusativePronoun($tag): bool
     {
-        return substr(trim($tag), 0, 3) === 'PPO';
+        return strpos(trim($tag), 'PPO') === 0;
     }
 
     /** it he she thee
@@ -159,9 +158,9 @@ class BrillTagger
      * @param string $tag
      * @return bool
      */
-    public function isThirdPersonPronoun($tag)
+    public function isThirdPersonPronoun($tag): bool
     {
-        return substr(trim($tag), 0, 3) === 'PPS';
+        return strpos(trim($tag), 'PPS') === 0;
     }
 
     /** they we I you ye thou you'uns
@@ -169,9 +168,9 @@ class BrillTagger
      * @param string $tag
      * @return bool
      */
-    public function isSingularPersonalPronoun($tag)
+    public function isSingularPersonalPronoun($tag): bool
     {
-        return substr(trim($tag), 0, 4) === 'PPSS';
+        return strpos(trim($tag), 'PPSS') === 0;
     }
 
     /** itself himself myself yourself herself oneself ownself
@@ -179,9 +178,9 @@ class BrillTagger
      * @param string $tag
      * @return bool
      */
-    public function isSingularReflexivePronoun($tag)
+    public function isSingularReflexivePronoun($tag): bool
     {
-        return substr(trim($tag), 0, 3) === 'PPL';
+        return strpos(trim($tag), 'PPL') === 0;
     }
 
     /** themselves ourselves yourselves
@@ -189,9 +188,9 @@ class BrillTagger
      * @param string $tag
      * @return bool
      */
-    public function isPluralReflexivePronoun($tag)
+    public function isPluralReflexivePronoun($tag): bool
     {
-        return substr(trim($tag), 0, 4) === 'PPLS';
+        return strpos(trim($tag), 'PPLS') === 0;
     }
 
     /** ours mine his her/hers their/theirs our its my your/yours out thy thine
@@ -199,45 +198,45 @@ class BrillTagger
      * @param string $tag
      * @return bool
      */
-    public function isPossessivePronoun($tag)
+    public function isPossessivePronoun($tag): bool
     {
-        return in_array($tag, ['PP$$', 'PP$']);
+        return in_array($tag, ['PP$$', 'PP$'], true);
     }
 
     /**
      * @param string $token
      * @return bool
      */
-    public function isAdjective($token)
+    public function isAdjective($token): bool
     {
-        return (substr($token, -2) == 'al' || in_array('JJ', $this->dictionary[$token]));
+        return (substr($token, -2) === 'al' || in_array('JJ', $this->dictionary[$token], true));
     }
 
     /**
      * @param string $token
      * @return bool
      */
-    public function isGerund($token)
+    public function isGerund($token): bool
     {
-        return substr($token, -3) == 'ing';
+        return substr($token, -3) === 'ing';
     }
 
     /**
      * @param string $token
      * @return bool
      */
-    public function isPastParticiple($token)
+    public function isPastParticiple($token): bool
     {
-        return substr($token, -2) == 'ed';
+        return substr($token, -2) === 'ed';
     }
 
     /**
      * @param string $token
      * @return bool
      */
-    public function isAdverb($token)
+    public function isAdverb($token): bool
     {
-        return substr($token, -2) == 'ly';
+        return substr($token, -2) === 'ly';
     }
 
     /** Common noun to adj. if it ends with 'al',
@@ -247,7 +246,7 @@ class BrillTagger
      * @param string $token
      * @return string
      */
-    public function transformNoun($tag, $token)
+    public function transformNoun($tag, $token): string
     {
 
         if ($this->isAdjective($token)) {
@@ -276,17 +275,17 @@ class BrillTagger
      * @param string $token
      * @return mixed
      */
-    public function transformNounToVerb($tags, $i, $token)
+    public function transformBetweenNounAndVerb($tags, $i, $token)
     {
         # Noun to verb if the word before is 'would'
-        if ($this->isSingularNoun($tags[$i]['tag']) && $tags[$i - 1]['token'] == 'would') {
+        if ($tags[$i - 1]['token'] === 'would' && $this->isSingularNoun($tags[$i]['tag'])) {
             $tags[$i]['tag'] = 'VB';
         }
 
         # If we get noun noun, and the 2nd can be a verb, convert to verb
-        if ($this->isNoun($tags[$i]['tag']) &&
-            $this->isNoun($tags[$i - 1]['tag']) &&
-            $this->tokenExists($token)
+        if ($this->tokenExists($token)
+            && $this->isNoun($tags[$i]['tag'])
+            && $this->isNoun($tags[$i - 1]['tag'])
         ) {
             if ($this->isPastTenseVerb($token)) {
                 $tags[$i]['tag'] = 'VBN';
@@ -295,18 +294,8 @@ class BrillTagger
             }
         }
 
-        return $tags[$i]['tag'];
-    }
-
-    /**
-     * @param array $tags
-     * @param int   $i
-     * @return mixed
-     */
-    public function transformVerbToNoun($tags, $i)
-    {
         # Converts verbs after 'the' to nouns
-        if ($tags[$i - 1]['tag'] == 'DT' && $this->isVerb($tags[$i]['tag'])) {
+        if ($tags[$i - 1]['tag'] === 'DT' && $this->isVerb($tags[$i]['tag'])) {
             $tags[$i]['tag'] = 'NN';
         }
 
@@ -318,7 +307,7 @@ class BrillTagger
      * @param string $token
      * @return string
      */
-    public function transformNumerics($tag, $token)
+    public function transformNumerics($tag, $token): string
     {
         # tag numerals, cardinals, money (NNS)
         if (preg_match(NUMERAL, $token)) {
@@ -327,7 +316,7 @@ class BrillTagger
 
         # tag years
         if (preg_match(YEAR, $token, $matches)) {
-            $tag = (isset($matches['nns'])) ? 'NNS' : 'CD';
+            $tag = isset($matches['nns']) ? 'NNS' : 'CD';
         }
 
         # tag percentages
